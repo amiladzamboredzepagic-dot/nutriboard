@@ -16,4 +16,11 @@ npx expo start
 - [ ] Bookmark Recipe
 - [ ] Authorization & Authentification
 
+# Screenshots
+
+## Home in light mode
+![Home in light mode](docs/home_screen_light.jpeg)
+
+## Home in dark mode
+![Home in dark mode](docs/home_screen_dark.jpeg)
 
