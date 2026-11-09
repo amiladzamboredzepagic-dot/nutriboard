@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeStats } from "../components/RecipeStats";
+import { ThemeModeSwitch } from "../components/ThemeModeSwitch";
 
 const totalPrepMinutes = MOCK_RECIPES.reduce(
   (total, recipe) => total + recipe.prepTimeMinutes,
@@ -34,6 +35,7 @@ export default function HomeScreen() {
       ]}
       showsVerticalScrollIndicator={false}
     >
+      <ThemeModeSwitch />
       <RecipeStats
         recipeCount={recipeCount}
         totalPrepMinutes={totalPrepMinutes}

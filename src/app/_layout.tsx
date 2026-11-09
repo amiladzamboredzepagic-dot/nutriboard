@@ -1,7 +1,8 @@
-import { useTheme } from '@/hooks/use-theme';
 import { Stack } from 'expo-router';
+import { ThemeModeProvider } from '@/contexts/theme-mode-context';
+import { useTheme } from '@/hooks/use-theme';
 
-export default function RootLayout() {
+function RootStack() {
   const theme = useTheme();
 
   return (
@@ -24,5 +25,13 @@ export default function RootLayout() {
         }}
       />
     </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeModeProvider>
+      <RootStack />
+    </ThemeModeProvider>
   );
 }

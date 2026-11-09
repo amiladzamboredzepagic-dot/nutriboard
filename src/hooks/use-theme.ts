@@ -4,11 +4,18 @@
  */
 
 import { Colors } from '@/constants/theme';
+import { useThemeMode } from '@/contexts/theme-mode-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export function useTheme() {
-  const scheme = useColorScheme();
-  const theme = scheme === 'unspecified' ? 'light' : scheme;
+  const systemScheme = useColorScheme();
+  const { themeMode } = useThemeMode();
+  const scheme =
+    themeMode === 'system'
+      ? systemScheme === 'unspecified' || systemScheme === null
+        ? 'light'
+        : systemScheme
+      : themeMode;
 
-  return Colors[theme];
+  return Colors[scheme];
 }
