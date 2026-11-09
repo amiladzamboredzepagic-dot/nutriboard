@@ -1,3 +1,5 @@
+import { useTheme } from '@/hooks/use-theme';
+import { FontSizes } from '@/constants/theme';
 import { Recipe } from '@/types';
 import React from 'react';
 import {
@@ -13,6 +15,7 @@ interface RecipeCardProps {
 }
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
+  const theme = useTheme();
   const handlePress = () => {
     console.log(`Pressed recipe: ${recipe.title}`);    
   };
@@ -25,7 +28,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     <Pressable
       style={({ pressed }) => [
         styles.cardContainer,
-        pressed && styles.cardPressed,
+        pressed && { opacity: 0.95, backgroundColor: theme.backgroundSelected },
       ]}
       android_ripple={{ color: 'rgba(0, 0, 0, 0.05)' }}
       onPress={handlePress}
@@ -36,10 +39,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
         resizeMode="cover"
       />
       <View>
-        <Text style={styles.title} numberOfLines={1}>
+        <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
           {recipe.title}
         </Text>
-        <Text style={styles.details} numberOfLines={1}>
+        <Text style={[styles.details, { color: theme.textSecondary }]} numberOfLines={1}>
           {detailsText}
         </Text>
       </View>
@@ -53,20 +56,16 @@ const styles = StyleSheet.create({
     height: 192,
     gap: 8
   },
-  cardPressed: {
-    opacity: 0.95,
-    backgroundColor: '#F7F7F7',
-  },
   image: {
     width: '100%',
     height: 160, 
   },
   title: {
-    fontSize: 14,
+    fontSize: FontSizes.body,
     fontWeight: '600',
   },
   details: {
-    fontSize: 12,
+    fontSize: FontSizes.small,
     fontWeight: '400',
   },
 });

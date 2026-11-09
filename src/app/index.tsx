@@ -1,18 +1,26 @@
+import { FontSizes, Spacing } from "@/constants/theme";
 import { MOCK_RECIPES } from "@/data/recipes";
+import { useTheme } from "@/hooks/use-theme";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RecipeCard } from "../components/RecipeCard";
 
 export default function HomeScreen() {
   const recipeCount = MOCK_RECIPES.length;
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { paddingBottom: Spacing.md + insets.bottom },
+      ]}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.headerContainer}>
-        <Text style={styles.countText}>
+        <Text style={[styles.countText, { color: theme.textSecondary }]}>
           {recipeCount} {recipeCount === 1 ? "recipe" : "recipes"}
         </Text>
       </View>
@@ -29,24 +37,22 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
   },
   headerContainer: {
-    marginBottom: 12,
+    marginBottom: Spacing.md + Spacing.sm,
   },
   countText: {
-    fontSize: 14,
+    fontSize: FontSizes.body,
     fontWeight: "500",
-    color: "#6B7280",
   },
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    rowGap: 16,
+    rowGap: Spacing.lg,
   },
 });
