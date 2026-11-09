@@ -9,6 +9,8 @@ export const Colors = {
     backgroundElement: '#FFFFFF',
     backgroundSelected: '#F2F3EE',
     textSecondary: '#686868',
+    imagePlaceholder: '#F1F1EE',
+    imageBorder: '#A5A5A1',
     primary: '#5F6B4E',
     border: '#7A8462',
     gradientStart: '#82DB6E',
@@ -28,6 +30,8 @@ export const Colors = {
     backgroundElement: '#24271F',
     backgroundSelected: '#303329',
     textSecondary: '#B8B9B0',
+    imagePlaceholder: '#303329',
+    imageBorder: '#64665E',
     primary: '#B2C18D',
     border: '#7A8462',
     gradientStart: '#82DB6E',
@@ -59,6 +63,8 @@ export const FontSizes = {
 export const Spacing = {
   xs: 2,
   sm: 4,
+  tight: 5,
+  compact: 6,
   md: 8,
   lg: 16,
   xl: 24,
@@ -75,7 +81,6 @@ export const Radius = {
   xxl: 22,
   pill: 999,
 } as const;
-
 
 
 
