@@ -1,72 +1,79 @@
-import { Recipe } from '@/types';
 import React from 'react';
-import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, Radius, Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+import type { Recipe } from '@/types';
 
 interface RecipeDetailsProps {
   recipe: Recipe;
 }
 
 export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
+  const theme = useTheme();
   const defaultImage = 'https://via.placeholder.com/600x300';
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Image
-        source={{ uri: recipe.dishImageUri || defaultImage }}
-        style={styles.heroImage}
-        resizeMode="cover"
-      />
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}>
+      <View style={styles.page}>
+        <Image
+          source={{ uri: recipe.dishImageUri || defaultImage }}
+          style={[styles.heroImage, { backgroundColor: theme.imagePlaceholder }]}
+          resizeMode="cover"
+        />
 
-      <View style={styles.body}>
-        <Text style={styles.title}>{recipe.title}</Text>
+        <View style={styles.body}>
+          <Text style={[styles.title, { color: theme.text }]}>{recipe.title}</Text>
 
-        {recipe.shortDescription ? (
-          <Text style={styles.description}>{recipe.shortDescription}</Text>
-        ) : null}
-
-        <View style={styles.badgeRow}>
-          <View style={styles.badge}>
-            <Text style={styles.badgeLabel}>Prep Time</Text>
-            <Text style={styles.badgeValue}>{recipe.prepTimeMinutes} mins</Text>
-          </View>
-          <View style={styles.badge}>
-            <Text style={styles.badgeLabel}>Servings</Text>
-            <Text style={styles.badgeValue}>{recipe.servings}</Text>
-          </View>
-          {recipe.mealType ? (
-            <View style={styles.badge}>
-              <Text style={styles.badgeLabel}>Meal Type</Text>
-              <Text style={styles.badgeValue}>{recipe.mealType}</Text>
-            </View>
+          {recipe.shortDescription ? (
+            <Text style={[styles.description, { color: theme.textSecondary }]}>
+              {recipe.shortDescription}
+            </Text>
           ) : null}
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ingredients</Text>
-          {recipe.ingredients.map((ingredient, index) => (
-            <View key={`ing-${index}`} style={styles.listItem}>
-              <Text style={styles.bullet}>•</Text>
-              <Text style={styles.listText}>{ingredient}</Text>
+          <View style={styles.badgeRow}>
+            <View style={[styles.badge, { backgroundColor: theme.backgroundElement }]}>
+              <Text style={[styles.badgeLabel, { color: theme.textSecondary }]}>Prep Time</Text>
+              <Text style={[styles.badgeValue, { color: theme.text }]}>
+                {recipe.prepTimeMinutes} mins
+              </Text>
             </View>
-          ))}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preparation Steps</Text>
-          {recipe.preparationSteps.map((step, index) => (
-            <View key={step.id || `step-${index}`} style={styles.stepItem}>
-              <View style={styles.stepNumberBadge}>
-                <Text style={styles.stepNumber}>{index + 1}</Text>
+            <View style={[styles.badge, { backgroundColor: theme.backgroundElement }]}>
+              <Text style={[styles.badgeLabel, { color: theme.textSecondary }]}>Servings</Text>
+              <Text style={[styles.badgeValue, { color: theme.text }]}>{recipe.servings}</Text>
+            </View>
+            {recipe.mealType ? (
+              <View style={[styles.badge, { backgroundColor: theme.backgroundElement }]}>
+                <Text style={[styles.badgeLabel, { color: theme.textSecondary }]}>Meal Type</Text>
+                <Text style={[styles.badgeValue, { color: theme.text }]}>{recipe.mealType}</Text>
               </View>
-              <Text style={styles.stepText}>{step.description}</Text>
-            </View>
-          ))}
+            ) : null}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Ingredients</Text>
+            {recipe.ingredients.map((ingredient, index) => (
+              <View key={`ing-${index}`} style={styles.listItem}>
+                <Text style={[styles.bullet, { color: theme.primary }]}>•</Text>
+                <Text style={[styles.listText, { color: theme.text }]}>{ingredient}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Preparation Steps</Text>
+            {recipe.preparationSteps.map((step, index) => (
+              <View key={step.id || `step-${index}`} style={styles.stepItem}>
+                <View style={[styles.stepNumberBadge, { backgroundColor: theme.alertInfoBackground }]}>
+                  <Text style={[styles.stepNumber, { color: theme.alertInfo }]}>{index + 1}</Text>
+                </View>
+                <Text style={[styles.stepText, { color: theme.text }]}>{step.description}</Text>
+              </View>
+            ))}
+          </View>
+
         </View>
       </View>
     </ScrollView>
@@ -76,117 +83,109 @@ export const RecipeDetails: React.FC<RecipeDetailsProps> = ({ recipe }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   content: {
-    paddingBottom: 32,
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingBottom: Spacing.xxl,
+  },
+  page: {
+    width: '100%',
+    maxWidth: 800,
   },
   heroImage: {
     width: '100%',
     height: 240,
-    backgroundColor: '#F3F4F6',
   },
   body: {
-    padding: 20,
+    padding: Spacing.xl,
   },
   title: {
-    fontSize: 24,
+    fontSize: FontSizes.title,
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
+    marginBottom: Spacing.md,
   },
   description: {
-    fontSize: 15,
+    fontSize: FontSizes.body,
     fontWeight: '400',
-    color: '#4B5563',
-    lineHeight: 22,
-    marginBottom: 16,
+    lineHeight: FontSizes.body + Spacing.md + Spacing.xs,
+    marginBottom: Spacing.lg,
   },
   badgeRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 24,
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   badge: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: Spacing.md + Spacing.xs,
+    paddingVertical: Spacing.md,
+    borderRadius: Radius.lg,
     alignItems: 'center',
   },
   badgeLabel: {
-    fontSize: 11,
-    color: '#6B7280',
+    fontSize: FontSizes.helper,
     fontWeight: '500',
     textTransform: 'uppercase',
   },
   badgeValue: {
-    fontSize: 14,
+    fontSize: FontSizes.body,
     fontWeight: '600',
-    color: '#1F2937',
-    marginTop: 2,
+    marginTop: Spacing.xs,
   },
   section: {
-    marginTop: 20,
+    marginTop: Spacing.xl,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: FontSizes.brand,
     fontWeight: '600',
-    color: '#111827',
-    marginBottom: 12,
+    marginBottom: Spacing.md + Spacing.xs,
   },
   listItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: Spacing.md,
   },
   bullet: {
-    fontSize: 16,
-    color: '#10B981',
-    marginRight: 8,
+    fontSize: FontSizes.body,
+    marginRight: Spacing.md,
     lineHeight: 20,
   },
   listText: {
-    fontSize: 15,
-    color: '#374151',
+    fontSize: FontSizes.body,
     flex: 1,
     lineHeight: 20,
   },
   stepItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: Spacing.md + Spacing.sm,
   },
   stepNumberBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#ECFDF5',
+    width: Spacing.xl,
+    height: Spacing.xl,
+    borderRadius: Radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: Spacing.md + Spacing.xs,
     marginTop: 1,
   },
   stepNumber: {
-    fontSize: 12,
+    fontSize: FontSizes.small,
     fontWeight: '700',
-    color: '#059669',
   },
   stepText: {
-    fontSize: 15,
-    color: '#374151',
+    fontSize: FontSizes.body,
     flex: 1,
-    lineHeight: 22,
+    lineHeight: FontSizes.body + Spacing.md + Spacing.xs,
   },
   notesSection: {
-    backgroundColor: '#FEF3C7',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 24,
+    padding: Spacing.lg,
+    borderRadius: Radius.xl,
+    marginTop: Spacing.xl,
   },
   notesText: {
-    fontSize: 14,
-    color: '#92400E',
+    fontSize: FontSizes.body,
     lineHeight: 20,
   },
 });
