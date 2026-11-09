@@ -1,9 +1,19 @@
 import { FontSizes, Spacing } from "@/constants/theme";
 import { MOCK_RECIPES } from "@/data/recipes";
 import { useTheme } from "@/hooks/use-theme";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RecipeCard } from "../components/RecipeCard";
+import { RecipeStats } from "../components/RecipeStats";
+
+const totalPrepMinutes = MOCK_RECIPES.reduce(
+  (total, recipe) => total + recipe.prepTimeMinutes,
+  0,
+);
+const maxServings = MOCK_RECIPES.reduce(
+  (maximum, recipe) => Math.max(maximum, recipe.servings),
+  0,
+);
 
 export default function HomeScreen() {
   const recipeCount = MOCK_RECIPES.length;
@@ -19,11 +29,11 @@ export default function HomeScreen() {
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.headerContainer}>
-        <Text style={[styles.countText, { color: theme.textSecondary }]}>
-          {recipeCount} {recipeCount === 1 ? "recipe" : "recipes"}
-        </Text>
-      </View>
+      <RecipeStats
+        recipeCount={recipeCount}
+        totalPrepMinutes={totalPrepMinutes}
+        maxServings={maxServings}
+      />
 
       <View style={styles.gridContainer}>
         {MOCK_RECIPES.map((recipe) => (
@@ -41,13 +51,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
-  },
-  headerContainer: {
-    marginBottom: Spacing.md + Spacing.sm,
-  },
-  countText: {
-    fontSize: FontSizes.body,
-    fontWeight: "500",
   },
   gridContainer: {
     flexDirection: "row",
