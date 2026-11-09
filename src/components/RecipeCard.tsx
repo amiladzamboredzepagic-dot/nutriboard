@@ -1,6 +1,14 @@
 import { SymbolView } from 'expo-symbols';
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
 import { FontSizes, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -8,9 +16,10 @@ import type { Recipe } from '@/types';
 
 interface RecipeCardProps {
   recipe: Recipe;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
+export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, style }) => {
   const theme = useTheme();
   const handlePress = () => {
     console.log(`Pressed recipe: ${recipe.title}`);    
@@ -22,6 +31,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     <Pressable
       style={({ pressed }) => [
         styles.cardContainer,
+        style,
         pressed && { opacity: 0.95, backgroundColor: theme.backgroundSelected },
       ]}
       android_ripple={{ color: theme.backgroundSelected }}
@@ -70,7 +80,6 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 163,
     height: 192,
     gap: Spacing.md,
     padding: 0,

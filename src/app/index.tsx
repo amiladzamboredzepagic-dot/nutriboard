@@ -1,7 +1,7 @@
-import { FontSizes, Spacing } from "@/constants/theme";
+import { Spacing } from "@/constants/theme";
 import { MOCK_RECIPES } from "@/data/recipes";
 import { useTheme } from "@/hooks/use-theme";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeStats } from "../components/RecipeStats";
@@ -19,6 +19,11 @@ export default function HomeScreen() {
   const recipeCount = MOCK_RECIPES.length;
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  
+  const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
+  const cardWidth =
+    (width - Spacing.lg * 2 - Spacing.lg * (columns - 1)) / columns;
 
   return (
     <ScrollView
@@ -37,7 +42,7 @@ export default function HomeScreen() {
 
       <View style={styles.gridContainer}>
         {MOCK_RECIPES.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+          <RecipeCard key={recipe.id} recipe={recipe} style={{ width: cardWidth }} />
         ))}
       </View>
     </ScrollView>
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    columnGap: Spacing.lg,
     rowGap: Spacing.lg,
   },
 });
