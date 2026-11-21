@@ -20,6 +20,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Recipe, RecipeFilter, RecipeSortOrder } from "@/types";
 import { RecipeCard } from "../components/RecipeCard";
+import { DeleteRecipeModal } from "../components/DeleteRecipeModal";
 import { RecipeListFeedback } from "../components/RecipeListFeedback";
 import { RecipeListHeader } from "../components/RecipeListHeader";
 
@@ -33,7 +34,14 @@ export default function HomeScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { refreshing, refresh, confirmDelete } = useRecipeActions({
+  const {
+    refreshing,
+    refresh,
+    confirmDelete,
+    pendingDeleteRecipe,
+    cancelDelete,
+    deleteRecipe,
+  } = useRecipeActions({
     hasRecipes: recipes.length > 0,
     setRecipes,
     setStatus,
@@ -73,48 +81,55 @@ export default function HomeScreen() {
   const emptyStateStatus = status === "ready" ? "empty" : status;
 
   return (
-    <FlatList
-      key={columns}
-      style={[styles.container, { backgroundColor: theme.background }]}
-      contentContainerStyle={{
-        flexGrow: 1,
-        padding: Spacing.lg,
-        paddingBottom: Spacing.md + insets.bottom,
-      }}
-      showsVerticalScrollIndicator={false}
-      refreshing={refreshing}
-      onRefresh={refresh}
-      data={visibleRecipes}
-      keyExtractor={(recipe) => recipe.id}
-      numColumns={columns}
-      columnWrapperStyle={columns > 1 ? styles.columnWrapper : undefined}
-      renderItem={({ item }) => (
-        <RecipeCard
-          recipe={item}
-          style={{ width: cardWidth }}
-          onLongPress={() => confirmDelete(item)}
-        />
-      )}
-      ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-      ListHeaderComponent={
-        <RecipeListHeader
-          recipeCount={recipeCount}
-          totalPrepMinutes={totalPrepMinutes}
-          maxServings={maxServings}
-          selectedFilter={selectedFilter}
-          onFilterChange={setSelectedFilter}
-          selectedSort={selectedSort}
-          onSortChange={setSelectedSort}
-        />
-      }
-      ListEmptyComponent={
-        <RecipeListFeedback
-          status={emptyStateStatus}
-          filter={selectedFilter}
-          onRetry={retry}
-        />
-      }
-    />
+    <>
+      <FlatList
+        key={columns}
+        style={[styles.container, { backgroundColor: theme.background }]}
+        contentContainerStyle={{
+          flexGrow: 1,
+          padding: Spacing.lg,
+          paddingBottom: Spacing.md + insets.bottom,
+        }}
+        showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={refresh}
+        data={visibleRecipes}
+        keyExtractor={(recipe) => recipe.id}
+        numColumns={columns}
+        columnWrapperStyle={columns > 1 ? styles.columnWrapper : undefined}
+        renderItem={({ item }) => (
+          <RecipeCard
+            recipe={item}
+            style={{ width: cardWidth }}
+            onLongPress={() => confirmDelete(item)}
+          />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+        ListHeaderComponent={
+          <RecipeListHeader
+            recipeCount={recipeCount}
+            totalPrepMinutes={totalPrepMinutes}
+            maxServings={maxServings}
+            selectedFilter={selectedFilter}
+            onFilterChange={setSelectedFilter}
+            selectedSort={selectedSort}
+            onSortChange={setSelectedSort}
+          />
+        }
+        ListEmptyComponent={
+          <RecipeListFeedback
+            status={emptyStateStatus}
+            filter={selectedFilter}
+            onRetry={retry}
+          />
+        }
+      />
+      <DeleteRecipeModal
+        recipe={pendingDeleteRecipe}
+        onCancel={cancelDelete}
+        onDelete={deleteRecipe}
+      />
+    </>
   );
 }
 

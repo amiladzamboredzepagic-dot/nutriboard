@@ -1,5 +1,4 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { Alert, Platform } from "react-native";
 
 import { fetchRecipes } from "@/data/api";
 import { removeRecipeById } from "@/utils/recipes";
@@ -19,6 +18,8 @@ export function useRecipeActions({
   setStatus,
 }: UseRecipeActionsOptions) {
   const [refreshing, setRefreshing] = useState(false);
+  const [pendingDeleteRecipe, setPendingDeleteRecipe] =
+    useState<Recipe | null>(null);
 
   const refresh = async () => {
     setRefreshing(true);
@@ -37,28 +38,26 @@ export function useRecipeActions({
   };
 
   const confirmDelete = (recipe: Recipe) => {
-    const message = `"${recipe.title}" will be removed.`;
-    const removeRecipe = () => {
-      setRecipes((currentRecipes) =>
-        removeRecipeById(currentRecipes, recipe.id),
-      );
-    };
-
-    if (Platform.OS === "web") {
-      if (
-        typeof window !== "undefined" &&
-        window.confirm(`Delete recipe?\n${message}`)
-      ) {
-        removeRecipe();
-      }
-      return;
-    }
-
-    Alert.alert("Delete recipe?", message, [
-      { text: "Cancel", style: "cancel" },
-      { text: "Delete", style: "destructive", onPress: removeRecipe },
-    ]);
+    setPendingDeleteRecipe(recipe);
   };
 
-  return { refreshing, refresh, confirmDelete };
+  const cancelDelete = () => {
+    setPendingDeleteRecipe(null);
+  };
+
+  const deleteRecipe = (recipe: Recipe) => {
+    setRecipes((currentRecipes) =>
+      removeRecipeById(currentRecipes, recipe.id),
+    );
+    cancelDelete();
+  };
+
+  return {
+    refreshing,
+    refresh,
+    confirmDelete,
+    pendingDeleteRecipe,
+    cancelDelete,
+    deleteRecipe,
+  };
 }
