@@ -13,6 +13,15 @@ export default function RecipeDetailsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const recipe = getRecipe(id);
+  const canGoBack = router.canGoBack();
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/');
+  };
 
   return (
     <>
@@ -20,31 +29,35 @@ export default function RecipeDetailsScreen() {
         options={{
           title: '',
           headerTintColor: theme.primary,
-          headerLeft: () => (
-            <Pressable
-              accessibilityLabel="Back to recipes"
-              accessibilityRole="button"
-              onPress={() => router.back()}
-              style={styles.headerBack}
-            >
-              <SymbolView
-                name={{
-                  ios: 'arrow.left',
-                  android: 'arrow_back',
-                  web: 'arrow_back',
-                }}
-                tintColor={theme.primary}
-                size={20}
-              />
-              <Text style={[styles.headerBackLabel, { color: theme.primary }]}>
-                Recipes
-              </Text>
-            </Pressable>
-          ),
+          headerLeft: canGoBack
+            ? () => (
+                <Pressable
+                  accessibilityLabel="Back to recipes"
+                  accessibilityRole="button"
+                  onPress={handleBack}
+                  style={styles.headerBack}
+                >
+                  <SymbolView
+                    name={{
+                      ios: 'arrow.left',
+                      android: 'arrow_back',
+                      web: 'arrow_back',
+                    }}
+                    tintColor={theme.primary}
+                    size={20}
+                  />
+                  <Text
+                    style={[styles.headerBackLabel, { color: theme.primary }]}
+                  >
+                    Recipes
+                  </Text>
+                </Pressable>
+              )
+            : () => null,
         }}
       />
       {recipe ? (
-        <RecipeDetails recipe={recipe} onBack={() => router.back()} />
+        <RecipeDetails recipe={recipe} onBack={handleBack} />
       ) : (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
           <EmptyState
