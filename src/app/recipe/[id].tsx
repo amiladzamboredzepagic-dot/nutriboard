@@ -1,27 +1,59 @@
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Spacing } from '@/constants/theme';
+import { FontSizes, Spacing } from '@/constants/theme';
 import { getRecipe } from '@/data/api';
 import { useTheme } from '@/hooks/use-theme';
 import EmptyState from '@/components/EmptyState';
+import { RecipeDetails } from '@/components/RecipeDetails';
 
 export default function RecipeDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const router = useRouter();
   const recipe = getRecipe(id);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <>
+      <Stack.Screen
+        options={{
+          title: '',
+          headerTintColor: theme.primary,
+          headerLeft: () => (
+            <Pressable
+              accessibilityLabel="Back to recipes"
+              accessibilityRole="button"
+              onPress={() => router.back()}
+              style={styles.headerBack}
+            >
+              <SymbolView
+                name={{
+                  ios: 'arrow.left',
+                  android: 'arrow_back',
+                  web: 'arrow_back',
+                }}
+                tintColor={theme.primary}
+                size={20}
+              />
+              <Text style={[styles.headerBackLabel, { color: theme.primary }]}>
+                Recipes
+              </Text>
+            </Pressable>
+          ),
+        }}
+      />
       {recipe ? (
-        <Text style={[styles.title, { color: theme.text }]}>{recipe.title}</Text>
+        <RecipeDetails recipe={recipe} onBack={() => router.back()} />
       ) : (
-        <EmptyState
-          title="Recipe not found"
-          message="This recipe may not exist or is no longer available."
-        />
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+          <EmptyState
+            title="Recipe not found"
+            message="This recipe may not exist or is no longer available."
+          />
+        </View>
       )}
-    </View>
+    </>
   );
 }
 
@@ -30,7 +62,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: Spacing.lg,
   },
-  title: {
-    fontSize: 18,
+  headerBack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingRight: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  headerBackLabel: {
+    fontSize: FontSizes.body,
   },
 });
