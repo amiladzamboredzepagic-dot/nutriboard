@@ -1,4 +1,5 @@
 import { Spacing } from "@/constants/theme";
+import { fetchRecipes } from "@/data/api";
 import { useTheme } from "@/hooks/use-theme";
 import { loadRecipes } from "@/utils/recipes";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function HomeScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [attempt, setAttempt] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -53,6 +55,22 @@ export default function HomeScreen() {
     setStatus("loading");
     setAttempt((currentAttempt) => currentAttempt + 1);
   };
+  const refresh = async () => {
+    setRefreshing(true);
+    try {
+      const refreshedRecipes = await fetchRecipes();
+      setRecipes(refreshedRecipes);
+      setStatus("ready");
+    } catch (error) {
+      console.error("Could not refresh recipes", error);
+      if (recipes.length === 0) {
+        setStatus("error");
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <FlatList
       key={columns}
@@ -63,6 +81,8 @@ export default function HomeScreen() {
         paddingBottom: Spacing.md + insets.bottom,
       }}
       showsVerticalScrollIndicator={false}
+      refreshing={refreshing}
+      onRefresh={refresh}
       data={recipes}
       keyExtractor={(recipe) => recipe.id}
       numColumns={columns}
