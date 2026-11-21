@@ -1,26 +1,40 @@
 import { Spacing } from "@/constants/theme";
-import { fetchRecipes } from "@/data/api";
 import { useTheme } from "@/hooks/use-theme";
-import { loadRecipes } from "@/utils/recipes";
+import {
+  useRecipeActions,
+  type RecipeLoadStatus,
+} from "@/hooks/use-recipe-actions";
+import {
+  filterRecipes,
+  getRecipeSummary,
+  loadRecipes,
+} from "@/utils/recipes";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Recipe, RecipeFilter } from "@/types";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeListFeedback } from "../components/RecipeListFeedback";
 import { RecipeListHeader } from "../components/RecipeListHeader";
 
-type LoadStatus = "loading" | "error" | "ready";
-
 export default function HomeScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [status, setStatus] = useState<LoadStatus>("loading");
+  const [status, setStatus] = useState<RecipeLoadStatus>("loading");
   const [attempt, setAttempt] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<RecipeFilter>("all");
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { refreshing, refresh, confirmDelete } = useRecipeActions({
+    hasRecipes: recipes.length > 0,
+    setRecipes,
+    setStatus,
+  });
 
   useEffect(() => {
     let ignore = false;
@@ -39,19 +53,9 @@ export default function HomeScreen() {
     };
   }, [attempt]);
 
-  const recipeCount = recipes.length;
-  const totalPrepMinutes = recipes.reduce(
-    (total, recipe) => total + recipe.prepTimeMinutes,
-    0,
-  );
-  const maxServings = recipes.reduce(
-    (maximum, recipe) => Math.max(maximum, recipe.servings),
-    0,
-  );
-  const visibleRecipes =
-    selectedFilter === "all"
-      ? recipes
-      : recipes.filter((recipe) => recipe.mealType === selectedFilter);
+  const { recipeCount, totalPrepMinutes, maxServings } =
+    getRecipeSummary(recipes);
+  const visibleRecipes = filterRecipes(recipes, selectedFilter);
 
   const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const cardWidth =
@@ -59,21 +63,6 @@ export default function HomeScreen() {
   const retry = () => {
     setStatus("loading");
     setAttempt((currentAttempt) => currentAttempt + 1);
-  };
-  const refresh = async () => {
-    setRefreshing(true);
-    try {
-      const refreshedRecipes = await fetchRecipes();
-      setRecipes(refreshedRecipes);
-      setStatus("ready");
-    } catch (error) {
-      console.error("Could not refresh recipes", error);
-      if (recipes.length === 0) {
-        setStatus("error");
-      }
-    } finally {
-      setRefreshing(false);
-    }
   };
   const emptyStateStatus = status === "ready" ? "empty" : status;
 
@@ -94,7 +83,11 @@ export default function HomeScreen() {
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? styles.columnWrapper : undefined}
       renderItem={({ item }) => (
-        <RecipeCard recipe={item} style={{ width: cardWidth }} />
+        <RecipeCard
+          recipe={item}
+          style={{ width: cardWidth }}
+          onLongPress={() => confirmDelete(item)}
+        />
       )}
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       ListHeaderComponent={

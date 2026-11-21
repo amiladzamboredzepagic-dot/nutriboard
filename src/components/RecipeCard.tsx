@@ -17,15 +17,26 @@ import type { Recipe } from '@/types';
 interface RecipeCardProps {
   recipe: Recipe;
   style?: StyleProp<ViewStyle>;
+  onLongPress: () => void;
 }
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, style }) => {
+export const RecipeCard: React.FC<RecipeCardProps> = ({
+  recipe,
+  style,
+  onLongPress,
+}) => {
   const theme = useTheme();
   const handlePress = () => {
     console.log(`Pressed recipe: ${recipe.title}`);    
   };
 
   const detailsText = `${recipe.prepTimeMinutes}m · ${recipe.servings} serving${recipe.servings > 1 ? 's' : ''}`;
+  const accessibilityLabel = [
+    recipe.title,
+    recipe.mealType ?? 'Uncategorized',
+    `${recipe.prepTimeMinutes} minutes`,
+    `${recipe.servings} serving${recipe.servings === 1 ? '' : 's'}`,
+  ].join(', ');
 
   return (
     <Pressable
@@ -34,8 +45,12 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, style }) => {
         style,
         pressed && { opacity: 0.95, backgroundColor: theme.backgroundSelected },
       ]}
-      android_ripple={{ color: theme.backgroundSelected }}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint="Long press to delete"
+      android_ripple={{ color: theme.border }}
       onPress={handlePress}
+      onLongPress={onLongPress}
     >
       <View style={[styles.imageContainer, { borderColor: theme.imageBorder }]}>
         {recipe.dishImageUri ? (

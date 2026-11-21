@@ -1,5 +1,11 @@
 import { fetchRecipes } from "@/data/api";
-import type { Recipe } from "@/types";
+import type { Recipe, RecipeFilter } from "@/types";
+
+export type RecipeSummary = {
+  recipeCount: number;
+  totalPrepMinutes: number;
+  maxServings: number;
+};
 
 export type RecipeLoadResult =
   | { status: "ready"; recipes: Recipe[] }
@@ -14,4 +20,34 @@ export async function loadRecipes(
   } catch {
     return { status: "error" };
   }
+}
+
+export function getRecipeSummary(recipes: Recipe[]): RecipeSummary {
+  return {
+    recipeCount: recipes.length,
+    totalPrepMinutes: recipes.reduce(
+      (total, recipe) => total + recipe.prepTimeMinutes,
+      0,
+    ),
+    maxServings: recipes.reduce(
+      (maximum, recipe) => Math.max(maximum, recipe.servings),
+      0,
+    ),
+  };
+}
+
+export function filterRecipes(
+  recipes: Recipe[],
+  filter: RecipeFilter,
+): Recipe[] {
+  return filter === "all"
+    ? recipes
+    : recipes.filter((recipe) => recipe.mealType === filter);
+}
+
+export function removeRecipeById(
+  recipes: Recipe[],
+  recipeId: string,
+): Recipe[] {
+  return recipes.filter((recipe) => recipe.id !== recipeId);
 }
