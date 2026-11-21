@@ -1,6 +1,7 @@
 import { Link, Stack } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { Spacing } from '@/constants/theme';
 import { ThemeModeProvider } from '@/contexts/theme-mode-context';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -8,39 +9,48 @@ function RootStack() {
   const theme = useTheme();
 
   return (
-    <Stack>
-
+    <Stack
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.background,
+        },
+        headerLargeStyle: {
+          backgroundColor: theme.background,
+        },
+        headerTitleStyle: {
+          fontWeight: 'bold',
+          color: theme.text,
+        },
+        headerLargeTitleStyle: {
+          color: theme.text,
+        },
+        headerTintColor: theme.text,
+        headerShadowVisible: false,
+        headerLargeTitleShadowVisible: false,
+        contentStyle: { backgroundColor: theme.background },
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
           title: 'My NutriBoard Recipes',
           headerLargeTitle: true,
-          headerStyle: {
-            backgroundColor: theme.background,
-          },
-            headerTitleStyle: {
-            fontWeight: 'bold',
-            color: theme.text,
-          },
-          headerTintColor: theme.text,
-          contentStyle: { backgroundColor: theme.background },
+          headerRight: () => (
+            <Link
+              href="/about"
+              style={{ color: theme.primary, fontSize: 16 }}
+            >
+              About
+            </Link>
+          ),
         }}
       />
       <Stack.Screen
         name="about"
         options={{
           title: 'About',
-          headerStyle: {
-            backgroundColor: theme.background,
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            color: theme.text,
-          },
-          headerTintColor: theme.text,
-          contentStyle: { backgroundColor: theme.background },
           headerLeft: () => (
-            <Link href="/" replace asChild>
+            <Link href="/" dismissTo asChild>
               <Pressable
                 accessibilityLabel="Back to recipes"
                 accessibilityRole="button"
@@ -48,13 +58,16 @@ function RootStack() {
               >
                 <SymbolView
                   name={{
-                    ios: 'chevron.left',
+                    ios: 'arrow.left',
                     android: 'arrow_back',
                     web: 'arrow_back',
                   }}
-                  tintColor={theme.text}
-                  size={22}
+                  tintColor={theme.primary}
+                  size={20}
                 />
+                <Text style={[styles.backLabel, { color: theme.primary }]}>
+                  Recipes
+                </Text>
               </Pressable>
             </Link>
           ),
@@ -74,6 +87,13 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   backButton: {
-    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingRight: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  backLabel: {
+    fontSize: 14,
   },
 });
