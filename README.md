@@ -9,10 +9,13 @@ npx expo start
 
 # Features
 - [x] List of recipes (mock data)
+- [x] Filter recipes by meal type
+- [x] Sort recipes by newest and prep time
+- [x] Pull to refresh
+- [x] Delete recipes
 - [ ] Recipe details screen
 - [ ] Add Recipe
 - [ ] Edit Recipe
-- [ ] Delete Recipe
 - [ ] Bookmark Recipe
 - [ ] Authorization & Authentification
 

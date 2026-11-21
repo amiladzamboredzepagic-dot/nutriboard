@@ -4,7 +4,7 @@ import { Spacing } from "@/constants/theme";
 import { FilterChip } from "@/components/FilterChip";
 import { RecipeStats } from "@/components/RecipeStats";
 import { ThemeModeSwitch } from "@/components/ThemeModeSwitch";
-import type { RecipeFilter } from "@/types";
+import type { RecipeFilter, RecipeSortOrder } from "@/types";
 
 type RecipeListHeaderProps = {
   recipeCount: number;
@@ -12,6 +12,8 @@ type RecipeListHeaderProps = {
   maxServings: number;
   selectedFilter: RecipeFilter;
   onFilterChange: (filter: RecipeFilter) => void;
+  selectedSort: RecipeSortOrder;
+  onSortChange: (order: RecipeSortOrder) => void;
 };
 
 const FILTERS: { label: string; value: RecipeFilter }[] = [
@@ -22,12 +24,19 @@ const FILTERS: { label: string; value: RecipeFilter }[] = [
   { label: "Snack", value: "Snack" },
 ];
 
+const SORT_ORDERS: { label: string; value: RecipeSortOrder }[] = [
+  { label: "Newest", value: "newest" },
+  { label: "Longest", value: "longest" },
+];
+
 export function RecipeListHeader({
   recipeCount,
   totalPrepMinutes,
   maxServings,
   selectedFilter,
   onFilterChange,
+  selectedSort,
+  onSortChange,
 }: RecipeListHeaderProps) {
   return (
     <View style={styles.container}>
@@ -44,6 +53,14 @@ export function RecipeListHeader({
             label={label}
             selected={selectedFilter === value}
             onPress={() => onFilterChange(value)}
+          />
+        ))}
+        {SORT_ORDERS.map(({ label, value }) => (
+          <FilterChip
+            key={value}
+            label={label}
+            selected={selectedSort === value}
+            onPress={() => onSortChange(value)}
           />
         ))}
       </View>

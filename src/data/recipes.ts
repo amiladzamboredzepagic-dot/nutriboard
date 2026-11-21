@@ -4,6 +4,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: "rec-1",
     title: "Green Goddess Quinoa Bowl",
+    createdAt: "2025-02-01T10:00:00.000Z",
     shortDescription:
       "A crisp, nutrient-dense lunch loaded with fresh herbs and healthy fats.",
     ingredients: [
@@ -35,6 +36,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: "rec-2",
     title: "Overnight Berry Chia Pudding",
+    createdAt: "2025-03-15T10:00:00.000Z",
     shortDescription:
       "Make-ahead creamy chia bowl topped with fresh seasonal berries and honey.",
     ingredients: [
@@ -70,6 +72,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: "rec-3",
     title: "Sheet Pan Lemon Herb Salmon",
+    createdAt: "2025-04-20T10:00:00.000Z",
     shortDescription:
       "Flaky salmon fillet baked with tender asparagus and lemon slices in under 20 minutes.",
     ingredients: [
@@ -106,6 +109,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: "rec-4",
     title: "Spicy Roasted Chickpeas",
+    createdAt: "2025-05-04T10:00:00.000Z",
     shortDescription:
       "Crunchy, high-protein roasted snack seasoned with smoked paprika and cayenne.",
     ingredients: [
@@ -142,6 +146,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: "rec-5",
     title: "Classic Avocado & Egg Toast",
+    createdAt: "2025-06-18T10:00:00.000Z",
     shortDescription:
       "Toasted sourdough bread topped with mashed avocado, soft-boiled egg, and chili flakes.",
     ingredients: [

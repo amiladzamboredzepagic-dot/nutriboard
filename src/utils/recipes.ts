@@ -1,5 +1,5 @@
 import { fetchRecipes } from "@/data/api";
-import type { Recipe, RecipeFilter } from "@/types";
+import type { Recipe, RecipeFilter, RecipeSortOrder } from "@/types";
 
 export type RecipeSummary = {
   recipeCount: number;
@@ -43,6 +43,17 @@ export function filterRecipes(
   return filter === "all"
     ? recipes
     : recipes.filter((recipe) => recipe.mealType === filter);
+}
+
+export function sortRecipes(
+  recipes: Recipe[],
+  order: RecipeSortOrder,
+): Recipe[] {
+  return [...recipes].sort((a, b) =>
+    order === "newest"
+      ? Date.parse(b.createdAt) - Date.parse(a.createdAt)
+      : b.prepTimeMinutes - a.prepTimeMinutes,
+  );
 }
 
 export function removeRecipeById(

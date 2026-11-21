@@ -8,6 +8,7 @@ import {
   filterRecipes,
   getRecipeSummary,
   loadRecipes,
+  sortRecipes,
 } from "@/utils/recipes";
 import { useEffect, useState } from "react";
 import {
@@ -17,7 +18,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { Recipe, RecipeFilter } from "@/types";
+import type { Recipe, RecipeFilter, RecipeSortOrder } from "@/types";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeListFeedback } from "../components/RecipeListFeedback";
 import { RecipeListHeader } from "../components/RecipeListHeader";
@@ -27,6 +28,8 @@ export default function HomeScreen() {
   const [status, setStatus] = useState<RecipeLoadStatus>("loading");
   const [attempt, setAttempt] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState<RecipeFilter>("all");
+  const [selectedSort, setSelectedSort] =
+    useState<RecipeSortOrder>("newest");
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -55,7 +58,10 @@ export default function HomeScreen() {
 
   const { recipeCount, totalPrepMinutes, maxServings } =
     getRecipeSummary(recipes);
-  const visibleRecipes = filterRecipes(recipes, selectedFilter);
+  const visibleRecipes = sortRecipes(
+    filterRecipes(recipes, selectedFilter),
+    selectedSort,
+  );
 
   const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const cardWidth =
@@ -97,6 +103,8 @@ export default function HomeScreen() {
           maxServings={maxServings}
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
+          selectedSort={selectedSort}
+          onSortChange={setSelectedSort}
         />
       }
       ListEmptyComponent={
