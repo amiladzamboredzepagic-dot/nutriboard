@@ -5,7 +5,7 @@ import { loadRecipes } from "@/utils/recipes";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { Recipe } from "@/types";
+import type { Recipe, RecipeFilter } from "@/types";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeListFeedback } from "../components/RecipeListFeedback";
 import { RecipeListHeader } from "../components/RecipeListHeader";
@@ -17,6 +17,7 @@ export default function HomeScreen() {
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [attempt, setAttempt] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<RecipeFilter>("all");
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -47,6 +48,10 @@ export default function HomeScreen() {
     (maximum, recipe) => Math.max(maximum, recipe.servings),
     0,
   );
+  const visibleRecipes =
+    selectedFilter === "all"
+      ? recipes
+      : recipes.filter((recipe) => recipe.mealType === selectedFilter);
 
   const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const cardWidth =
@@ -70,6 +75,7 @@ export default function HomeScreen() {
       setRefreshing(false);
     }
   };
+  const emptyStateStatus = status === "ready" ? "empty" : status;
 
   return (
     <FlatList
@@ -83,7 +89,7 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
       refreshing={refreshing}
       onRefresh={refresh}
-      data={recipes}
+      data={visibleRecipes}
       keyExtractor={(recipe) => recipe.id}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? styles.columnWrapper : undefined}
@@ -96,11 +102,14 @@ export default function HomeScreen() {
           recipeCount={recipeCount}
           totalPrepMinutes={totalPrepMinutes}
           maxServings={maxServings}
+          selectedFilter={selectedFilter}
+          onFilterChange={setSelectedFilter}
         />
       }
       ListEmptyComponent={
         <RecipeListFeedback
-          status={status === "ready" ? "empty" : status}
+          status={emptyStateStatus}
+          filter={selectedFilter}
           onRetry={retry}
         />
       }

@@ -1,4 +1,5 @@
 export type MealType = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';
+export type RecipeFilter = 'all' | MealType;
 
 export interface PreparationStep {
     id: string; 

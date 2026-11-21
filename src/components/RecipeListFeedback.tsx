@@ -3,14 +3,17 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 import { FontSizes, Radius, Spacing } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 import EmptyState from "@/components/EmptyState";
+import type { RecipeFilter } from "@/types";
 
 type RecipeListFeedbackProps = {
   status: "loading" | "error" | "empty";
+  filter: RecipeFilter;
   onRetry: () => void;
 };
 
 export function RecipeListFeedback({
   status,
+  filter,
   onRetry,
 }: RecipeListFeedbackProps) {
   const theme = useTheme();
@@ -46,10 +49,15 @@ export function RecipeListFeedback({
     );
   }
 
-  return (
+  return filter === "all" ? (
     <EmptyState
       title="No recipes yet"
       message="Your recipes will appear here."
+    />
+  ) : (
+    <EmptyState
+      title={`No ${filter.toLowerCase()} recipes`}
+      message="Choose another meal type."
     />
   );
 }
