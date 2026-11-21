@@ -1,32 +1,58 @@
 import { Spacing } from "@/constants/theme";
-import { MOCK_RECIPES } from "@/data/recipes";
 import { useTheme } from "@/hooks/use-theme";
+import { loadRecipes } from "@/utils/recipes";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import EmptyState from "../components/EmptyState";
+import type { Recipe } from "@/types";
 import { RecipeCard } from "../components/RecipeCard";
-import { RecipeStats } from "../components/RecipeStats";
-import { ThemeModeSwitch } from "../components/ThemeModeSwitch";
+import { RecipeListFeedback } from "../components/RecipeListFeedback";
+import { RecipeListHeader } from "../components/RecipeListHeader";
 
-const totalPrepMinutes = MOCK_RECIPES.reduce(
-  (total, recipe) => total + recipe.prepTimeMinutes,
-  0,
-);
-const maxServings = MOCK_RECIPES.reduce(
-  (maximum, recipe) => Math.max(maximum, recipe.servings),
-  0,
-);
+type LoadStatus = "loading" | "error" | "ready";
 
 export default function HomeScreen() {
-  const recipeCount = MOCK_RECIPES.length;
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [status, setStatus] = useState<LoadStatus>("loading");
+  const [attempt, setAttempt] = useState(0);
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
+  useEffect(() => {
+    let ignore = false;
+
+    void loadRecipes().then((result) => {
+      if (ignore) return;
+
+      if (result.status === "ready") {
+        setRecipes(result.recipes);
+      }
+      setStatus(result.status);
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [attempt]);
+
+  const recipeCount = recipes.length;
+  const totalPrepMinutes = recipes.reduce(
+    (total, recipe) => total + recipe.prepTimeMinutes,
+    0,
+  );
+  const maxServings = recipes.reduce(
+    (maximum, recipe) => Math.max(maximum, recipe.servings),
+    0,
+  );
+
   const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
   const cardWidth =
     (width - Spacing.lg * 2 - Spacing.lg * (columns - 1)) / columns;
-
+  const retry = () => {
+    setStatus("loading");
+    setAttempt((currentAttempt) => currentAttempt + 1);
+  };
   return (
     <FlatList
       key={columns}
@@ -37,7 +63,7 @@ export default function HomeScreen() {
         paddingBottom: Spacing.md + insets.bottom,
       }}
       showsVerticalScrollIndicator={false}
-      data={MOCK_RECIPES}
+      data={recipes}
       keyExtractor={(recipe) => recipe.id}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? styles.columnWrapper : undefined}
@@ -46,20 +72,16 @@ export default function HomeScreen() {
       )}
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       ListHeaderComponent={
-        <View>
-          <ThemeModeSwitch />
-          <RecipeStats
-            recipeCount={recipeCount}
-            totalPrepMinutes={totalPrepMinutes}
-            maxServings={maxServings}
-          />
-        </View>
+        <RecipeListHeader
+          recipeCount={recipeCount}
+          totalPrepMinutes={totalPrepMinutes}
+          maxServings={maxServings}
+        />
       }
-      ListHeaderComponentStyle={styles.listHeader}
       ListEmptyComponent={
-        <EmptyState
-          title="No recipes yet"
-          message="Your recipes will appear here."
+        <RecipeListFeedback
+          status={status === "ready" ? "empty" : status}
+          onRetry={retry}
         />
       }
     />
@@ -69,9 +91,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  listHeader: {
-    marginBottom: Spacing.lg,
   },
   columnWrapper: {
     flexDirection: "row",
