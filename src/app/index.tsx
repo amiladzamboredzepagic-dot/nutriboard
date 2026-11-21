@@ -3,6 +3,7 @@ import { MOCK_RECIPES } from "@/data/recipes";
 import { useTheme } from "@/hooks/use-theme";
 import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import EmptyState from "../components/EmptyState";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeStats } from "../components/RecipeStats";
 import { ThemeModeSwitch } from "../components/ThemeModeSwitch";
@@ -31,6 +32,7 @@ export default function HomeScreen() {
       key={columns}
       style={[styles.container, { backgroundColor: theme.background }]}
       contentContainerStyle={{
+        flexGrow: 1,
         padding: Spacing.lg,
         paddingBottom: Spacing.md + insets.bottom,
       }}
@@ -54,6 +56,12 @@ export default function HomeScreen() {
         </View>
       }
       ListHeaderComponentStyle={styles.listHeader}
+      ListEmptyComponent={
+        <EmptyState
+          title="No recipes yet"
+          message="Your recipes will appear here."
+        />
+      }
     />
   );
 }
