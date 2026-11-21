@@ -13,7 +13,7 @@ npx expo start
 - [x] Sort recipes by newest and prep time
 - [x] Pull to refresh
 - [x] Delete recipes
-- [ ] Recipe details screen
+- [x] Recipe details screen
 - [ ] Add Recipe
 - [ ] Edit Recipe
 - [ ] Bookmark Recipe
