@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: Spacing.md,
-    marginBottom: Spacing.lg,
   },
   statBox: {
     flex: 1,
