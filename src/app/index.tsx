@@ -4,6 +4,7 @@ import {
   useRecipeActions,
   type RecipeLoadStatus,
 } from "@/hooks/use-recipe-actions";
+import { useRouter } from "expo-router";
 import {
   filterRecipes,
   getRecipeSummary,
@@ -31,6 +32,7 @@ export default function HomeScreen() {
   const [selectedFilter, setSelectedFilter] = useState<RecipeFilter>("all");
   const [selectedSort, setSelectedSort] =
     useState<RecipeSortOrder>("newest");
+  const router = useRouter();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -101,6 +103,7 @@ export default function HomeScreen() {
           <RecipeCard
             recipe={item}
             style={{ width: cardWidth }}
+            onPress={() => router.push(`/recipe/${item.id}`)}
             onLongPress={() => confirmDelete(item)}
           />
         )}
