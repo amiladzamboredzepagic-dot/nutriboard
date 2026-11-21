@@ -15,3 +15,7 @@ export async function fetchRecipes(
 
   return MOCK_RECIPES;
 }
+
+export function getRecipe(id: string): Recipe | undefined {
+  return MOCK_RECIPES.find((recipe) => recipe.id === id);
+}
